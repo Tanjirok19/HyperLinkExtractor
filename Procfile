@@ -1,1 +1,1 @@
-web: python HyperLinkExtractor.py
+web: python3 HyperLinkExtractor.py
