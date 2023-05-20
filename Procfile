@@ -1,1 +1,1 @@
-web: python3 HyperLinkExtractor.py
+web: python3 HyperLinkExtractortelegramBot.py
