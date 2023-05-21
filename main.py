@@ -47,8 +47,6 @@ dispatcher.add_handler(MessageHandler(Filters.all & (Filters.caption_entity("tex
 
 # Start the bot
 if __name__ == "__main__":
-    # Get the port from the environment variable, or use 5000 as default
-    port = int(os.environ.get("PORT", 80))
-    updater.start_webhook(listen="0.0.0.0", port=port, url_path="6068678844:AAFonkifasL94AMxc3f9BA3e4qQEVqPH5vw")
-    updater.bot.set_webhook("https://hyperlinkextractor.herokuapp.com//6068678844:AAFonkifasL94AMxc3f9BA3e4qQEVqPH5vw")
+    # Start the bot in long-polling mode
+    updater.start_polling()
     updater.idle()
