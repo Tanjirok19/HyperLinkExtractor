@@ -34,9 +34,9 @@ def extract_hyperlink(update, context):
                 # Send the updated message, preserving the formatting
                 context.bot.send_message(chat_id=message.from_user.id, text=new_message, parse_mode='HTML')
 
-def main():
-# Create an instance of the Telegram Updaterdef main():
-updater = Updater("6068678844:AAFonkifasL94AMxc3f9BA3e4qQEVqPH5vw", use_context=True)
+
+# Create an instance of the Telegram Updater
+updater = Updater("YOUR_TOKEN_HERE", use_context=True)
 
 # Get the dispatcher to register handlers
 dispatcher = updater.dispatcher
@@ -46,6 +46,4 @@ dispatcher.add_handler(MessageHandler(Filters.all & (Filters.caption_entity("tex
 
 # Start the bot
 if __name__ == "__main__":
-    main()
-
-
+    updater.start_polling()
