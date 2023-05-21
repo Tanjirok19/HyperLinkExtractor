@@ -45,4 +45,5 @@ dispatcher = updater.dispatcher
 dispatcher.add_handler(MessageHandler(Filters.all & (Filters.caption_entity("text_link") | Filters.entity("text_link")), extract_hyperlink))
 
 # Start the bot
+if __name__ == "__main__
 updater.start_polling()
