@@ -36,11 +36,12 @@ def extract_hyperlinks(update, context):
                 hyperlink_url = entity.url
 
                 # Prepare the new message with the extracted hyperlink text and link included
-                new_message = new_message.replace(hyperlink_text, f"{hyperlink_text} {hyperlink_url}")
-                offset_shift += len(hyperlink_url) + 1  # Adjust offset for the next hyperlink
+                new_hyperlink = f'<b>{hyperlink_text}</b>\n<b>{hyperlink_url}</b>'
+                new_message = new_message.replace(hyperlink_text, new_hyperlink, 1)
+                offset_shift += len(new_hyperlink) - len(hyperlink_text)
 
-        # Send the updated message, preserving the formatting
-        context.bot.send_message(chat_id=message.from_user.id, text=new_message)
+        # Send the updated message with HTML formatting
+        context.bot.send_message(chat_id=message.chat_id, text=new_message, parse_mode='HTML')
 
 
 # Create an instance of the Telegram Updater
