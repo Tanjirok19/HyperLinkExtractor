@@ -24,7 +24,7 @@ def extract_hyperlinks(update, context):
                     offset_shift += len(f"{hyperlink_url}\n")  # Adjust offset for the next hyperlink
 
             # Send the updated message with the new caption, preserving the formatting
-            context.bot.send_photo(chat_id=message.from_user.id, photo=message.photo[-1].file_id, caption=new_caption,parse_mode='HTML')
+            context.bot.send_photo(chat_id='-1001604746255', photo=message.photo[-1].file_id, caption=new_caption, parse_mode='HTML')
 
     # Check if the message is a text message with a hyperlink
     elif message.text and message.entities:
@@ -41,11 +41,11 @@ def extract_hyperlinks(update, context):
                 offset_shift += len(new_hyperlink) - len(hyperlink_text)
 
         # Send the updated message with HTML formatting
-        context.bot.send_message(chat_id=message.chat_id, text=new_message, parse_mode='HTML')
+        context.bot.send_message(chat_id='-1001604746255', text=new_message, parse_mode='HTML')
 
 
 # Create an instance of the Telegram Updater
-updater = Updater("6115649194:AAFx7PdIvJ56sYSIYVJ1kF8VlSstz4cEUlw", use_context=True)
+updater = Updater("6276637483:AAGGGJCgvD7datJveR99TK2ZuyC28x2wpzk", use_context=True)
 
 # Get the dispatcher to register handlers
 dispatcher = updater.dispatcher
