@@ -14,7 +14,6 @@ def extract_hyperlinks(update, context):
 
         # Check if the caption contains a hyperlink
         if message.caption_entities:
-            new_caption = f"<b>{sender_name}</b>:\n\n{caption}"  # Include the sender's name in the caption
             offset_shift = 0
             for entity in message.caption_entities:
                 if entity.type == "text_link":
@@ -29,12 +28,7 @@ def extract_hyperlinks(update, context):
             # Send the updated message with the new caption, preserving the formatting
             context.bot.send_photo(chat_id='-1001604746255', photo=message.photo[-1].file_id, caption=new_caption, parse_mode='HTML')
 
-    # Check if the message is a regular text message
-    elif message.text:
-        # Process the regular text message
-        # Add your desired logic here to respond to regular text messages
-        context.bot.send_message(chat_id=update.effective_chat.id, text="Thank you for your message!")
-
+  
 # Create an instance of the Telegram Updater
 updater = Updater("6276637483:AAGGGJCgvD7datJveR99TK2ZuyC28x2wpzk", use_context=True)
 
