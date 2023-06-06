@@ -9,9 +9,12 @@ def extract_hyperlinks(update, context):
     if message.forward_from_chat and message.forward_from_chat.type == 'channel' and message.photo and message.caption:
         caption = message.caption
 
+        # Extract the sender's name
+        sender_name = message.forward_sender_name
+
         # Check if the caption contains a hyperlink
         if message.caption_entities:
-            new_caption = caption
+            new_caption = f"<b>{sender_name}</b>:\n\n{caption}"  # Include the sender's name in the caption
             offset_shift = 0
             for entity in message.caption_entities:
                 if entity.type == "text_link":
