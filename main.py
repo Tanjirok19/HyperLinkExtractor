@@ -5,8 +5,8 @@ from telegram.ext import Updater, MessageHandler, Filters
 def extract_hyperlinks(update, context):
     message = update.message
 
-    # Check if the message is a forwarded message with a photo and caption
-    if message.forward_from_chat and message.photo and message.caption:
+    # Check if the message is a forwarded message with a photo and caption from a channel
+    if message.forward_from_chat and message.forward_from_chat.type == 'channel' and message.photo and message.caption:
         caption = message.caption
 
         # Check if the caption contains a hyperlink
@@ -26,23 +26,6 @@ def extract_hyperlinks(update, context):
             # Send the updated message with the new caption, preserving the formatting
             context.bot.send_photo(chat_id='-1001604746255', photo=message.photo[-1].file_id, caption=new_caption, parse_mode='HTML')
 
-    # Check if the message is a text message with a hyperlink
-    elif message.text and message.entities:
-        new_message = message.text
-        offset_shift = 0
-        for entity in message.entities:
-            if entity.type == "text_link":
-                hyperlink_text = message.text[entity.offset + offset_shift:entity.offset + entity.length + offset_shift]
-                hyperlink_url = entity.url
-
-                # Prepare the new message with the extracted hyperlink text and link included
-                new_hyperlink = f'<b>{hyperlink_text}</b>\n<b>{hyperlink_url}</b>'
-                new_message = new_message.replace(hyperlink_text, new_hyperlink, 1)
-                offset_shift += len(new_hyperlink) - len(hyperlink_text)
-
-        # Send the updated message with HTML formatting
-        context.bot.send_message(chat_id='-1001604746255', text=new_message, parse_mode='HTML')
-
 
 # Create an instance of the Telegram Updater
 updater = Updater("6276637483:AAGGGJCgvD7datJveR99TK2ZuyC28x2wpzk", use_context=True)
@@ -51,7 +34,7 @@ updater = Updater("6276637483:AAGGGJCgvD7datJveR99TK2ZuyC28x2wpzk", use_context=
 dispatcher = updater.dispatcher
 
 # Register the handler for extracting hyperlinks using a lambda function for filtering
-dispatcher.add_handler(MessageHandler(Filters.all & (Filters.caption_entity("text_link") | Filters.entity("text_link")), extract_hyperlinks))
+dispatcher.add_handler(MessageHandler(Filters.all & Filters.forwarded & Filters.photo, extract_hyperlinks))
 
 # Start the bot
 if __name__ == "__main__":
