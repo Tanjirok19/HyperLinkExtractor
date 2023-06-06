@@ -29,6 +29,11 @@ def extract_hyperlinks(update, context):
             # Send the updated message with the new caption, preserving the formatting
             context.bot.send_photo(chat_id='-1001604746255', photo=message.photo[-1].file_id, caption=new_caption, parse_mode='HTML')
 
+    # Check if the message is a regular text message
+    elif message.text:
+        # Process the regular text message
+        # Add your desired logic here to respond to regular text messages
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Thank you for your message!")
 
 # Create an instance of the Telegram Updater
 updater = Updater("6276637483:AAGGGJCgvD7datJveR99TK2ZuyC28x2wpzk", use_context=True)
@@ -36,8 +41,8 @@ updater = Updater("6276637483:AAGGGJCgvD7datJveR99TK2ZuyC28x2wpzk", use_context=
 # Get the dispatcher to register handlers
 dispatcher = updater.dispatcher
 
-# Register the handler for extracting hyperlinks using a lambda function for filtering
-dispatcher.add_handler(MessageHandler(Filters.all & Filters.forwarded & Filters.photo, extract_hyperlinks))
+# Register the handler for extracting hyperlinks and handling regular text messages
+dispatcher.add_handler(MessageHandler(Filters.all, extract_hyperlinks))
 
 # Start the bot
 if __name__ == "__main__":
