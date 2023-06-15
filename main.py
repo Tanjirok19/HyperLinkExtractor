@@ -1,30 +1,23 @@
 import telegram
 from telegram.ext import Updater, MessageHandler, Filters
+import re
 
 # Define a function to handle incoming messages
 def extract_hyperlinks(update, context):
     message = update.message
 
-    # Check if the message contains an image
-    if message.photo:
+    # Check if the message contains an image with a caption
+    if message.photo and message.caption:
         caption = message.caption
 
-        # Check if the caption contains a hyperlink
-        if message.caption_entities:
-            new_caption = caption
-            offset_shift = 0
-            for entity in message.caption_entities:
-                if entity.type == "text_link":
-                    hyperlink_text = caption[entity.offset + offset_shift:entity.offset + entity.length + offset_shift]
-                    hyperlink_url = entity.url
+        # Extract and replace hyperlinks in the caption using regex
+        hyperlink_pattern = r'<a href="(.*?)">(.*?)</a>'
+        new_caption = re.sub(hyperlink_pattern, r'<b>\2</b> <b>\1</b>\n\n', caption, flags=re.IGNORECASE)
 
-                    # Prepare the new caption with the extracted hyperlink text and link included
-                    new_caption = new_caption.replace(hyperlink_text, f"<b>{hyperlink_text}</b> <b>{hyperlink_url}</b>\n\n")
-                    offset_shift += len(f"{hyperlink_url}\n")  # Adjust offset for the next hyperlink
+        # Send the updated message with the new caption, preserving the formatting
+        photo_file_id = message.photo[-1].file_id
+        context.bot.send_photo(chat_id='-1001604746255', photo=photo_file_id, caption=new_caption, parse_mode='HTML')
 
-            # Send the updated message with the new caption, preserving the formatting
-        context.bot.send_photo(chat_id='-1001604746255', photo=message.photo[-1].file_id, caption=new_caption, parse_mode='HTML')
-        
 # Create an instance of the Telegram Updater
 updater = Updater("6276637483:AAGGGJCgvD7datJveR99TK2ZuyC28x2wpzk", use_context=True)
 
@@ -32,7 +25,7 @@ updater = Updater("6276637483:AAGGGJCgvD7datJveR99TK2ZuyC28x2wpzk", use_context=
 dispatcher = updater.dispatcher
 
 # Register the handler for extracting hyperlinks and handling messages with images
-dispatcher.add_handler(MessageHandler(Filters.photo | Filters.forwarded, extract_hyperlinks))
+dispatcher.add_handler(MessageHandler(Filters.photo & Filters.caption, extract_hyperlinks))
 
 # Start the bot
 if __name__ == "__main__":
