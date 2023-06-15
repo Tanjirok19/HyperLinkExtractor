@@ -1,34 +1,53 @@
-import telegram
+import logging
+import os
+import time
 from telegram.ext import Updater, MessageHandler, Filters
-import re
+import requests
+from io import BytesIO
 
-# Define a function to handle incoming messages
+# Enable logging
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
+
+logger = logging.getLogger(__name__)
+
+TOKEN = os.getenv('6276637483:AAGGGJCgvD7datJveR99TK2ZuyC28x2wpzk')
+
+
 def extract_hyperlinks(update, context):
     message = update.message
+    entities = message.parse_entities(types=['url'])
+    for entity in entities:
+        url = entity["url"]
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                # Extract photo and caption from the response
+                photo_file_id = BytesIO(response.content)
+                new_caption = f"<a href='{url}'>{url}</a>"
+                context.bot.send_photo(chat_id='-1001604746255', photo=photo_file_id, caption=new_caption, parse_mode='HTML')
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error extracting hyperlinks: {e}")
+        except telegram.error.RetryAfter as e:
+            logger.warning(f"Flood control exceeded. Retrying in {e.retry_after} seconds...")
+            time.sleep(e.retry_after)
+            context.bot.send_photo(chat_id='-1001604746255', photo=photo_file_id, caption=new_caption, parse_mode='HTML')
 
-    # Check if the message contains an image with a caption
-    if message.photo and message.caption:
-        caption = message.caption
 
-        # Extract and replace hyperlinks in the caption using regex
-        hyperlink_pattern = r'<a href="(.*?)">(.*?)</a>'
-        new_caption = re.sub(hyperlink_pattern, r'<b>\2</b> <b>\1</b>\n\n', caption, flags=re.IGNORECASE)
+def main():
+    # Create the Updater and pass it your bot's token.
+    updater = Updater(TOKEN, use_context=True)
 
-        # Send the updated message with the new caption, preserving the formatting
-        photo_file_id = message.photo[-1].file_id
-        context.bot.send_photo(chat_id='-1001604746255', photo=photo_file_id, caption=new_caption, parse_mode='HTML')
+    # Get the dispatcher to register handlers
+    dispatcher = updater.dispatcher
 
-# Create an instance of the Telegram Updater
-updater = Updater("6276637483:AAGGGJCgvD7datJveR99TK2ZuyC28x2wpzk", use_context=True)
+    # Register the extract_hyperlinks handler
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, extract_hyperlinks))
 
-# Get the dispatcher to register handlers
-dispatcher = updater.dispatcher
-
-# Register the handler for extracting hyperlinks and handling messages with images
-dispatcher.add_handler(MessageHandler(Filters.photo & Filters.caption, extract_hyperlinks))
-
-# Start the bot
-if __name__ == "__main__":
-    # Start the bot in long-polling mode
+    # Start the Bot
     updater.start_polling()
     updater.idle()
+
+
+if __name__ == '__main__':
+    main()
