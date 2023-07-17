@@ -26,7 +26,7 @@ def extract_hyperlinks(update, context):
         context.bot.send_photo(chat_id='-1001604746255', photo=message.photo[-1].file_id, caption=new_caption, parse_mode='HTML')
 
 # Create an instance of the Telegram Updater
-updater = Updater("6276637483:AAGGGJCgvD7datJveR99TK2ZuyC28x2wpzk", use_context=True)
+updater = Updater("5859323972:AAG00CPOXPc1_LKMGw7DWmywlTweiMduCEo", use_context=True)
 
 # Get the dispatcher to register handlers
 dispatcher = updater.dispatcher
