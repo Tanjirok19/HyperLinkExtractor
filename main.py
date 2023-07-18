@@ -24,7 +24,7 @@ def extract_hyperlinks(update, context):
 
             # Send the updated message with the new caption, preserving the formatting
         context.bot.send_photo(chat_id='-1001604746255', photo=message.photo[-1].file_id, caption=new_caption, parse_mode='HTML')
-
+        
 # Create an instance of the Telegram Updater
 updater = Updater("5859323972:AAG00CPOXPc1_LKMGw7DWmywlTweiMduCEo", use_context=True)
 
@@ -34,7 +34,8 @@ dispatcher = updater.dispatcher
 # Register the handler for extracting hyperlinks and handling messages with images
 dispatcher.add_handler(MessageHandler(Filters.photo | Filters.forwarded, extract_hyperlinks))
 
+# Start the bot
 if __name__ == "__main__":
     # Start the bot in long-polling mode
-    updater.start_polling(poll_interval=0.5)
+    updater.start_polling()
     updater.idle()
