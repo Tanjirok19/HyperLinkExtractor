@@ -5,6 +5,10 @@ from telegram.ext import Updater, MessageHandler, Filters
 def extract_hyperlinks(update, context):
     message = update.message
 
+    # Check if the message object exists and has the expected structure
+    if message is None or not hasattr(message, "photo") or not hasattr(message, "caption"):
+        return
+
     # Check if the message contains an image
     if message.photo:
         caption = message.caption
@@ -23,7 +27,8 @@ def extract_hyperlinks(update, context):
                     offset_shift += len(f"{hyperlink_url}\n")  # Adjust offset for the next hyperlink
 
             # Send the updated message with the new caption, preserving the formatting
-        context.bot.send_photo(chat_id='-1001604746255', photo=message.photo[-1].file_id, caption=new_caption, parse_mode='HTML')
+            context.bot.send_photo(chat_id='-1001604746255', photo=message.photo[-1].file_id, caption=new_caption, parse_mode='HTML')
+
         
 # Create an instance of the Telegram Updater
 updater = Updater("5859323972:AAG00CPOXPc1_LKMGw7DWmywlTweiMduCEo", use_context=True)
